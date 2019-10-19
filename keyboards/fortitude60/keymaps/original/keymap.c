@@ -21,6 +21,13 @@ enum custom_keycodes {
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 
+enum user_macro {
+  UM_EMHL,
+  UM_KHKR
+};
+#define M_EMHL MACROTAP(UM_EMHL)
+#define M_KHKR MACROTAP(UM_KHKR)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Qwerty
@@ -41,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,  KC_Q, KC_W,    KC_E,    KC_R,          KC_T,                                   KC_Y,                KC_U,    KC_I,    KC_O,    KC_P,    KC_EQL,  \
   KC_LCTL, KC_A, KC_S,    KC_D,    KC_F,          KC_G,                                   KC_H,                KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
   KC_LSFT, KC_Z, KC_X,    KC_C,    KC_V,          KC_B,                 KC_LBRC, KC_RBRC, KC_N,                KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT ,\
-                 KC_LGUI, KC_LALT, ALT_T(KC_SPC), LT(_LOWER,KC_LANG2),  KC_ESC,  KC_ENT,  LT(_RAISE,KC_LANG1), KC_BSPC, KC_RALT, KC_RGUI\
+                 KC_LGUI, KC_LALT, ALT_T(KC_SPC), M_EMHL,  KC_ESC,  KC_ENT,  M_KHKR, KC_BSPC, KC_RALT, KC_RGUI\
 ),
 
 /* Lower
@@ -123,4 +130,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
   }
   return true;
+}
+
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
+    switch(id) {
+        case UM_EMHL:
+            return MACRO_TAP_HOLD_LAYER( record, MACRO(T(MHEN), T(LANG2), END), _LOWER );
+            break;
+
+        case UM_KHKR:
+            return MACRO_TAP_HOLD_LAYER( record, MACRO(T(HENK), T(LANG1), END), _RAISE );
+            break;
+    }
+    return MACRO_NONE;
 }
